@@ -1,4 +1,6 @@
 using Authorization.Models.Domain;
+using Authorization.Repositories.Abstract;
+using Authorization.Repositories.Implementation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +13,17 @@ builder.Services.AddDbContext<DatabaseContext>(options=>options.UseSqlServer(bui
 // for identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<DatabaseContext>().AddDefaultTokenProviders();
 builder.Services.ConfigureApplicationCookie(op => op.LoginPath = "/UserAuthentication/Login");
+builder.Services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    // Default Password settings.
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequiredLength = 6;
+    options.Password.RequiredUniqueChars = 0;
+});
 
 var app = builder.Build();
 
